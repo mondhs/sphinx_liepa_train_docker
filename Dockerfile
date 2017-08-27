@@ -25,8 +25,7 @@ RUN \
   apt-get -y upgrade  && \
   apt-get install -y --no-install-recommends apt-utils git ca-certificates curl sudo\
         build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base \
-        bison python-dev swig && \
-        rm -rf /var/lib/apt/lists/*
+        bison python-dev swig 
 
 # SphinxBase 
 RUN git clone https://github.com/cmusphinx/sphinxbase.git /opt/sphinxbase --depth 1
@@ -35,7 +34,7 @@ RUN ./autogen.sh
 RUN  ./configure
 RUN make 
 RUN make install
-RUN rm -rf /opt/sphinxbase
+
 
 RUN git clone https://github.com/cmusphinx/pocketsphinx.git /opt/pocketsphinx --depth 1
 WORKDIR "/opt/pocketsphinx"
@@ -43,7 +42,7 @@ RUN ./autogen.sh
 RUN  ./configure
 RUN make 
 RUN make install
-RUN rm -rf /opt/pocketsphinx
+
 
 
 RUN git clone https://github.com/cmusphinx/sphinxtrain.git /opt/sphinxtrain --depth 1
@@ -52,7 +51,7 @@ RUN ./autogen.sh
 RUN  ./configure
 RUN make 
 RUN make install
-RUN rm -rf /opt/sphinxtrain
+
 
 
 RUN mkdir -p /opt/sphinx_liepa_train/liepa_audio
@@ -77,4 +76,7 @@ CMD ["npm", "start"]
 
 ############################### CLEAN UP ##########################################
 
-
+RUN rm -rf /opt/sphinxtrain
+RUN rm -rf /opt/pocketsphinx
+RUN rm -rf /opt/sphinxbase
+RUN rm -rf /var/lib/apt/lists/*
