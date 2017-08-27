@@ -17,8 +17,7 @@ logging.basicConfig(filename='/tmp/liepa/01_transform_files.log',level=logging.D
 
 # coruptedFileSet = set(line.strip() for line in open('corupted_files.txt'))
 
-src_dir = "../mounted-liepa"
-#src_dir = "/home/mgreibus/tmp/mounted-liepa/Testavimui"
+src_dir = "../liepa_audio/test"
 dest_dir = "../wav"
 dest_short_dir = "../wav_short"
 dest_coding_dir = "../wav_coding"

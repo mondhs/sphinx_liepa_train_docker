@@ -20,7 +20,7 @@ find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/ėjunk/įjunk/g'
 
 
 '''
-import glob,os, chardet,re
+import glob,os,re
 import itertools
 import subprocess
 import logging
@@ -33,12 +33,13 @@ logging.basicConfig(filename='/tmp/liepa/02_extract_dict.log',level=logging.DEBU
 #logger.addHandler(logging.FileHandler('/tmp/liepa/extract_dict.log', encoding='utf-8'))
 
 
+wav_dir = "../liepa_audio"
+env_type = "train"
 
-
-dest_unkown_dir = "../wav_unknown"
-dest_minus_dir = "../wav_minus"
-dest_coding_dir = "../wav_coding"
-dest_short_dir = "../wav_short"
+#dest_unkown_dir = "../wav_unknown"
+#dest_minus_dir = "../wav_minus"
+#dest_coding_dir = "../wav_coding"
+#dest_short_dir = "../wav_short"
 
 def checkSpellingNot(text):
     return []
@@ -157,25 +158,25 @@ def moveWavAndText(in_txt_file,dest_path):
 def processCorpusDir(corpus_dir):
     contentMap = {}
     wordsSet = set([])
-    dest_unknown_path = os.path.join(dest_unkown_dir,corpus_dir)
-    dest_minus_path = os.path.join(dest_minus_dir,corpus_dir)
-    dest_coding_path = os.path.join(dest_coding_dir,corpus_dir)
-    dest_short_path = os.path.join(dest_coding_dir,corpus_dir)
+    #dest_unknown_path = os.path.join(dest_unkown_dir,corpus_dir)
+    #dest_minus_path = os.path.join(dest_minus_dir,corpus_dir)
+    #dest_coding_path = os.path.join(dest_coding_dir,corpus_dir)
+    #dest_short_path = os.path.join(dest_coding_dir,corpus_dir)
     print (corpus_dir)
-    read_files = glob.glob("../wav/" + corpus_dir + "/*.txt")
+    read_files = glob.glob( wav_dir +"/"+env_type+ "/" + corpus_dir + "/*.txt")
     if len(read_files) == 0:
-        os.rmdir("../wav/" + corpus_dir)
-        logging.warning(',%s, Deleting dir %s', "../wav/error.txt",corpus_dir)
+        #os.rmdir( wav_dir + "/" + corpus_dir)
+        logging.warning(',%s, Deleting dir %s',  wav_dir + "/error.txt",corpus_dir)
         return 
     #print "read_files: {}".format( read_files )
     for in_file in read_files:
         #print "in_file: " + in_file
         with open(in_file, "rb") as infile:
             line = infile.read()
-            if os.path.getsize(in_file) < 10:
-                logging.warning(',%s,too short %i, %s', in_file, os.path.getsize(in_file), line)
-                moveWavAndText(in_file,dest_short_path)
-                continue;
+            #if os.path.getsize(in_file) < 10:
+            #    logging.warning(',%s,too short %i, %s', in_file, os.path.getsize(in_file), line)
+            #    moveWavAndText(in_file,dest_short_path)
+            #    continue;
             #try:
             #    line = force_decode(line).replace(u"\ufeff", "")
             #except:
@@ -242,9 +243,9 @@ def processCorpusDir(corpus_dir):
             
             
             #print line
-            if not re.search('_', line) is None or not re.search('-', line) is None:
+            #if not re.search('_', line) is None or not re.search('-', line) is None:
 #                print "skiping. due _: " + in_file
-                logging.warning(',%s, unkown underscore: %s', in_file, line)
+                #logging.warning(',%s, unkown underscore: %s', in_file, line)
 #                moveWavAndText(in_file,dest_minus_path)
  #               continue;
 
@@ -253,12 +254,12 @@ def processCorpusDir(corpus_dir):
             line = re.sub('\-',"", line)
 
 
-            spellIssue = checkSpelling(line)
-            if spellIssue:
-                logging.warning(',%s, spelling issue: %s', in_file, "; ".join(spellIssue))
+            #spellIssue = checkSpellingNot(line)
+            #if spellIssue:
+                #logging.warning(',%s, spelling issue: %s', in_file, "; ".join(spellIssue))
                 #raise Exception(" has unexepcted - %s (%s)" % (line, in_file))
-                moveWavAndText(in_file,dest_unknown_path)
-                continue;
+                #moveWavAndText(in_file,dest_unknown_path)
+                #continue;
 
 
             wordList = line.split(' ')
@@ -274,15 +275,15 @@ def processCorpusDir(corpus_dir):
     print [corpus_dir, ": ", len(trainMap)]
     if len(trainMap) == 0:
         #raise Exception("Not possible detect list! " + corpus_dir)
-        logging.warning(',%s, List is empty for dir %s', "../wav/error.txt", corpus_dir)
+        logging.warning(',%s, List is empty for dir %s', wav_dir+"/error.txt", corpus_dir)
 
     
-    with codecs.open("../target/_"+corpus_dir+"_train.transcription", "w",encoding='utf8') as outfile:
+    with codecs.open("../target/_"+corpus_dir+"_"+env_type+".transcription", "w",encoding='utf8') as outfile:
         for key, value in trainMap.iteritems():
             out_line = "<s> {line} </s> ({file_name})".format(line=value,file_name=key)
             outfile.write(out_line.decode("utf-8") + "\n")
 
-    with codecs.open("../target/_"+corpus_dir+"_train.fileids", "w",encoding='utf8') as outfile:
+    with codecs.open("../target/_"+corpus_dir+"_"+env_type+".fileids", "w",encoding='utf8') as outfile:
         for key, value in trainMap.iteritems():
             outfile.write(corpus_dir +"/" + key + "\n")
 
@@ -297,7 +298,7 @@ def processCorpusDir(corpus_dir):
 
 def main():
     processingDirs = []
-    for corpus_dir in os.listdir("../wav"):
+    for corpus_dir in os.listdir(wav_dir +"/" + env_type):
         #if not corpus_dir == "D265":
         #    continue
         #processingDirs.append(corpus_dir);

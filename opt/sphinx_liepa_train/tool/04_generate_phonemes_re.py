@@ -3,7 +3,7 @@
 '''
 @author: Mindaugas Greibus
 '''
-import glob,os, re, chardet
+import glob,os, re
 import shutil
 import subprocess
 import transcriber_re
@@ -12,9 +12,21 @@ import transcriber_re
 
 wordSet = set([])
 
-src_dir = "../wav"
-for corpus_dir in os.listdir(src_dir):
-    if(os.path.isdir(os.path.join(src_dir, corpus_dir))):
+src_dir = "../liepa_audio"
+for corpus_dir in os.listdir(src_dir+"/test"):
+    if(os.path.isdir(os.path.join(src_dir, "test" ,corpus_dir))):
+       print corpus_dir
+       with open(src_dir + "/../target/_"+ corpus_dir+"_word.txt", "rb") as infile:
+            for line in infile:
+                line = line.decode("utf-8")
+                line = line.replace(u"\ufeff", "")
+                line = line.rstrip()
+                line=re.sub(r'<sil[\+\w]*>',r'',line)
+                wordSet.add(line)
+                
+                
+for corpus_dir in os.listdir(src_dir+"/train"):
+    if(os.path.isdir(os.path.join(src_dir, "train" ,corpus_dir))):
        print corpus_dir
        with open(src_dir + "/../target/_"+ corpus_dir+"_word.txt", "rb") as infile:
             for line in infile:

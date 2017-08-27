@@ -29,3 +29,12 @@ with open('../target/liepa_train_sil.transcription', 'r') as input_file, open('.
         line=re.sub(r'<sil> *</s>',r'</s>',line)
         line=re.sub(r'( *<sil>)+',r' <sil>',line)
         output_file.write(line.encode("utf-8") )
+        
+with open('../target/liepa_test_sil.transcription', 'r') as input_file, open('../target/liepa_test.transcription', 'w') as output_file:
+    for line in input_file:
+        line = line.decode("utf-8")
+        line=re.sub(r'<sil[\+\w]+>',r'<sil>',line)
+        line=re.sub(r'<s> *<sil>',r'<s>',line)
+        line=re.sub(r'<sil> *</s>',r'</s>',line)
+        line=re.sub(r'( *<sil>)+',r' <sil>',line)
+        output_file.write(line.encode("utf-8") )

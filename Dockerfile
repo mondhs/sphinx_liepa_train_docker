@@ -6,9 +6,9 @@ Maintainer mondhs bus<mondhs@gmail.com>
 ##### Build docker
 #docker build -t sphinx_liepa_train .
 ##### Bash interface
-#docker run  -v /c/Users/Naudotojas/liepa/LIEPA_garsynas:/data -it sphinx_liepa_train bash
+#docker run  -v $(realpath ./LIEPA_garsynas)/LIEPA_garsynas:/data -it mondhs/sphinx_liepa_train bash
 #### Web wrapper
-#docker run -p 8081:8081 -p 8082:8082 -v $(realpath ./LIEPA_garsynas):/data -it sphinx_liepa_train
+#docker run -p 8081:8081 -p 8082:8082 -v $(realpath ./LIEPA_garsynas):/data -it mondhs/sphinx_liepa_train
 
 
 
@@ -25,7 +25,8 @@ RUN \
   apt-get -y upgrade  && \
   apt-get install -y --no-install-recommends apt-utils git ca-certificates curl sudo\
         build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base \
-        bison python-dev swig
+        bison python-dev swig && \
+        rm -rf /var/lib/apt/lists/*
 
 # SphinxBase 
 RUN git clone https://github.com/cmusphinx/sphinxbase.git /opt/sphinxbase --depth 1
@@ -34,6 +35,7 @@ RUN ./autogen.sh
 RUN  ./configure
 RUN make 
 RUN make install
+RUN rm -rf /opt/sphinxbase
 
 RUN git clone https://github.com/cmusphinx/pocketsphinx.git /opt/pocketsphinx --depth 1
 WORKDIR "/opt/pocketsphinx"
@@ -41,6 +43,8 @@ RUN ./autogen.sh
 RUN  ./configure
 RUN make 
 RUN make install
+RUN rm -rf /opt/pocketsphinx
+
 
 RUN git clone https://github.com/cmusphinx/sphinxtrain.git /opt/sphinxtrain --depth 1
 WORKDIR "/opt/sphinxtrain"
@@ -48,6 +52,7 @@ RUN ./autogen.sh
 RUN  ./configure
 RUN make 
 RUN make install
+RUN rm -rf /opt/sphinxtrain
 
 
 RUN mkdir -p /opt/sphinx_liepa_train/liepa_audio
@@ -69,3 +74,7 @@ RUN sudo apt-get install -y nodejs
 WORKDIR "/opt/wrapper"
 RUN npm install ws --save
 CMD ["npm", "start"]
+
+############################### CLEAN UP ##########################################
+
+
