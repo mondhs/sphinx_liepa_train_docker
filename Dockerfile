@@ -25,8 +25,7 @@ RUN \
   apt-get -y upgrade  && \
   apt-get install -y --no-install-recommends apt-utils git ca-certificates curl sudo\
         build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base \
-        bison python-dev swig \
-        nodejs
+        bison python-dev swig
 
 # SphinxBase 
 RUN git clone https://github.com/cmusphinx/sphinxbase.git /opt/sphinxbase --depth 1
@@ -66,6 +65,7 @@ RUN rm -rf /opt/wrapper/contol_files
 RUN ln -s /opt/sphinx_liepa_train /opt/wrapper/contol_files
 
 RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
 WORKDIR "/opt/wrapper"
 RUN npm install ws --save
 CMD ["npm", "start"]
