@@ -25,14 +25,14 @@ RUN \
   apt-get -y upgrade  && \
   apt-get install -y --no-install-recommends apt-utils git ca-certificates curl sudo\
         build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base \
-        bison python-dev swig 
+        bison python-dev swig
 
-# SphinxBase 
+# SphinxBase
 RUN git clone https://github.com/cmusphinx/sphinxbase.git /opt/sphinxbase --depth 1
 WORKDIR "/opt/sphinxbase"
 RUN ./autogen.sh
 RUN  ./configure
-RUN make 
+RUN make
 RUN make install
 
 
@@ -40,7 +40,7 @@ RUN git clone https://github.com/cmusphinx/pocketsphinx.git /opt/pocketsphinx --
 WORKDIR "/opt/pocketsphinx"
 RUN ./autogen.sh
 RUN  ./configure
-RUN make 
+RUN make
 RUN make install
 
 
@@ -49,7 +49,7 @@ RUN git clone https://github.com/cmusphinx/sphinxtrain.git /opt/sphinxtrain --de
 WORKDIR "/opt/sphinxtrain"
 RUN ./autogen.sh
 RUN  ./configure
-RUN make 
+RUN make
 RUN make install
 
 
@@ -57,6 +57,8 @@ RUN make install
 RUN mkdir -p /opt/sphinx_liepa_train/liepa_audio
 RUN ln -s /data/train_repo /opt/sphinx_liepa_train/liepa_audio/train
 RUN ln -s /data/test_repo /opt/sphinx_liepa_train/liepa_audio/test
+RUN ln -s /data/sphinx_files/feat /opt/sphinx_liepa_train/feat
+RUN ln -s /data/sphinx_files/etc /opt/sphinx_liepa_train/etc
 
 
 

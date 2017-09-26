@@ -20,14 +20,14 @@ with open("../target/liepa_train.fileids", "wb") as outfile:
         if(os.path.isdir(os.path.join(src_dir, "train" ,corpus_dir))):
            with open(src_dir + "/../target/_"+ corpus_dir+"_train.fileids", "rb") as infile:
                 for line in infile:
-                    outfile.write(line)
+                    outfile.write("train/"+line)
 
 with open("../target/liepa_test.fileids", "wb") as outfile:
     for corpus_dir in os.listdir(src_dir + "/test"):
         if(os.path.isdir(os.path.join(src_dir, "test" ,corpus_dir))):
            with open(src_dir + "/../target/_"+ corpus_dir+"_test.fileids", "rb") as infile:
                 for line in infile:
-                    outfile.write(line)
+                    outfile.write("test/"+line)
 
 #with open("../target/liepa_test.transcription", "wb") as outfile:
 #    for corpus_dir in os.listdir(src_dir):
@@ -46,7 +46,7 @@ with open("../target/liepa_test_sil.transcription", "wb") as outfile:
                     #line = line.replace("\xef\xbb\xbf", "")
                     line = line.replace(u"\ufeff", "")
                     outfile.write(line.encode("utf-8"))
-                    
+
 
 with open("../target/liepa_train_sil.transcription", "wb") as outfile:
     for corpus_dir in os.listdir(src_dir+"/train"):
