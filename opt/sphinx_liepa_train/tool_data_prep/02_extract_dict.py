@@ -3,18 +3,18 @@
 '''
 @author: Mindaugas Greibus
 
-    find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/programį/programą/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/tolesną/tolesnę/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/ankstesną/ankstesnę/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/pabaigį/pabaigą/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/paskyrį/paskyrą/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/centriną/centrinę/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/tąsk/tęsk/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/paveikslį/paveikslą/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/abipusą/abipusę/g' 
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/programį/programą/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/tolesną/tolesnę/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/ankstesną/ankstesnę/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/pabaigį/pabaigą/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/paskyrį/paskyrą/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/centriną/centrinę/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/tąsk/tęsk/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/paveikslį/paveikslą/g'
 find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/abipusą/abipusę/g'
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/kairiną/kairinę/g' 
-find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/ėjunk/įjunk/g' 
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/abipusą/abipusę/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/kairiną/kairinę/g'
+find -iname '*.txt' -print0 | xargs -0  sed -i -e 's/ėjunk/įjunk/g'
 
 
 
@@ -33,15 +33,15 @@ logging.basicConfig(filename='/tmp/liepa/02_extract_dict.log',level=logging.DEBU
 #logger.addHandler(logging.FileHandler('/tmp/liepa/extract_dict.log', encoding='utf-8'))
 
 
-wav_dir = "../liepa_audio"
-env_type = "train"
+
 
 dest_unkown_dir = "../wav_unknown"
 dest_minus_dir = "../wav_minus"
 dest_coding_dir = "../wav_coding"
 dest_short_dir = "../wav_short"
 
-repo_name="test"
+test_repo_name="test"
+train_repo_name="train"
 
 def checkSpellingNot(text):
     return []
@@ -72,9 +72,9 @@ def checkSpelling(text):
     text = text.replace("<sil+ingest>", "")
     text = text.replace("<sil+stomach>", "")
     text = text.replace("<sil+page>", "")
-    
+
     text = text.replace("<sil+page>", "")
-    
+
 
     cmd = "echo \"" +text + "\" | hunspell -p liepa_hunspell.dic -i utf-8 -d lt_LT"
     print (cmd)
@@ -106,45 +106,44 @@ def checkSpelling(text):
     #print text
     return wordIssues
 
-def force_decode(string, codecs=[ 'utf-8', 'utf-16-le', 'windows-1257']):
-    pattern = r'[\wąčęėįšųūž]+'
+def force_decode(string, codecs=[ 'utf-8',  'utf-16-le', 'windows-1257']):
+    pattern = r'[aąčeęėiįšuųū]+'
     lt_letter =  r'[àáæèëðàøûþ]+'
     unicode_pattern = re.compile(pattern,  re.IGNORECASE)
     lt_letter_re = re.compile(lt_letter,  re.IGNORECASE)
-    #print '>'*120
-    #print(string.decode("utf-16"))
+    # print ('>'*120)
 
-    
+
+
     for i in codecs:
-        #print i + ">>>"
+        # print (i + ">>>")
+
         try:
             decoded = string.decode(i)
             decoded = decoded.replace(u"\ufeff", "")
             decoded = decoded.lower()
-            #testEncode = decoded.encode('utf-16-le')
-            #print ("testEncode {} : ?== {}".format (i,  decoded))
-            #print u'Unicode : %s' % (u', '.join(unicode_pattern.findall(testEncode)))
+
+            # print ("testEncode {} : ?== {}, \n {}".format (i,  decoded, unicode_pattern.findall(decoded)))
 
             if unicode_pattern.search(decoded) is not None:
+                #print(decoded)
                 #if lt_letter_re.search(testEncode) is not None:
-                #    logging.error("Not possible detect coding as unkown char exists! %s" % ([string]))              
+                #    logging.error("Not possible detect coding as unkown char exists! %s" % ([string]))
                 #    continue
                      #print 'return : %s' % (testEncode)
                 return decoded.strip()
         except:
-            #print "Exception in user code:"
-            #print '-'*60
-            #traceback.print_exc(file=sys.stdout)
-            #print '-'*60
+            #print ("Exception in user code:")
             pass
 
     #logging.error("Not possible detect coding! %s" % ([string]))
-    raise Exception("Not possible detect coding! " + string)     
+    raise Exception("Not possible detect coding! " + string)
 
 
 def moveWavAndText(in_txt_file,dest_path):
     '''
     Move txt and wav file to marked dir
+
     baseName = os.path.basename(in_txt_file)
     try:
         os.makedirs(dest_path)
@@ -159,7 +158,7 @@ def moveWavAndText(in_txt_file,dest_path):
     print ("move {} to {}".format(in_txt_file, dest_path))
 
 
-def processCorpusDir(corpus_dir):
+def processCorpusDir(repo_name, corpus_dir):
     contentMap = {}
     wordsSet = set([])
     dest_unknown_path = os.path.join(dest_unkown_dir,corpus_dir)
@@ -172,10 +171,10 @@ def processCorpusDir(corpus_dir):
     if len(read_files) == 0:
         #os.rmdir("../wav/" + corpus_dir)
         logging.warning(',%s, Deleting dir %s', "../wav/error.txt",corpus_dir)
-        return 
+        return
     #print "read_files: {}".format( read_files )
     for in_file in read_files:
-        #print "in_file: " + in_file
+        print ("in_file: " + in_file)
         with open(in_file, "rb") as infile:
             line = infile.read()
             line = force_decode(line)
@@ -183,9 +182,10 @@ def processCorpusDir(corpus_dir):
                 logging.warning(',%s,too short %i, %s', in_file, os.path.getsize(in_file), line)
                 moveWavAndText(in_file,dest_short_path)
                 continue;
-            #try:
+
+            # try:
             #    line = force_decode(line).replace(u"\ufeff", "")
-            #except:
+            # except:
             #    print("Not possible detect coding! %s in %s" % ([line], in_file))
             #    moveWavAndText(in_file,dest_coding_path)
             #    continue;
@@ -207,9 +207,9 @@ def processCorpusDir(corpus_dir):
             #line = re.sub('_([\wąčęėįšųū])',"<sil> \g<1>", line, re.UNICODE)
             #line = re.sub('(<sil>\s+)+'," <sil> ", line, re.UNICODE)#multi silences
             #line = re.sub('^\s*<sil>\s+',"", line) #extra silence in front
-            #line = re.sub('^\s*<silpause>\s+',"", line) #extra silence in front            
+            #line = re.sub('^\s*<silpause>\s+',"", line) #extra silence in front
             #line = re.sub('\s*<sil>$',"", line)#extra silence in end
-            #line = re.sub('\s*<silpause>$',"", line)#extra silence in end            
+            #line = re.sub('\s*<silpause>$',"", line)#extra silence in end
             line = re.sub(r'\r',r' ',line)
             line = re.sub(r'\n',r' ',line)
             line = re.sub(r'\s{2,}',r" ",line)
@@ -224,7 +224,7 @@ def processCorpusDir(corpus_dir):
             line = re.sub('e1',"ę", line)
             line = re.sub('i1',"į", line)
             line = re.sub('e3',"ė", line)
-            
+
             line = line.replace("buo", "buvo")
             line = line.replace(" letuv", " lietuv")
             line = line.replace("lituvos", "lietuvos")
@@ -232,22 +232,22 @@ def processCorpusDir(corpus_dir):
             line = line.replace("zdeš", "sdeš")
             line = line.replace("joe ", "joje ")
             line = line.replace("ye ", "yje ")
-            
+
             line = line.replace(" vienaz ", " vienas ")
             line = line.replace(" ira ", " yra ")
             line = line.replace(" laiška ", " laišką ")
             line = line.replace(" grįšti ", " grįžti ")
             line = line.replace(" koplystulpiai ", " koplytstulpiai ")
 
-            
 
-            
 
-            
 
-            
-            
-            
+
+
+
+
+
+
             #print line
             if not re.search('_', line) is None or not re.search('-', line) is None:
 #                print "skiping. due _: " + in_file
@@ -282,7 +282,7 @@ def processCorpusDir(corpus_dir):
         #raise Exception("Not possible detect list! " + corpus_dir)
         logging.warning(',%s, List is empty for dir %s', "../wav/error.txt", corpus_dir)
 
-    
+
     with codecs.open("../target/_"+corpus_dir+"_"+repo_name+".transcription", "w",encoding='utf8') as outfile:
         for key, value in contentMap.items():
             out_line = "<s> {line} </s> ({file_name})".format(line=value,file_name=key)
@@ -301,15 +301,14 @@ def processCorpusDir(corpus_dir):
 ## Main codec
 #######################################################################################################################
 
-def main():
+def main(repo_name):
     processingDirs = []
     for corpus_dir in os.listdir("../"+repo_name+"_repo"):
-        #if not corpus_dir == "D265":
-        #    continue
-        #processingDirs.append(corpus_dir);
-        processCorpusDir(corpus_dir)
+        # if not corpus_dir == "Z057Ml": # "S002Mg":
+        #     continue
+        processCorpusDir(repo_name, corpus_dir)
     pool = Pool(10)
-    
+
     for corpus_dir in processingDirs:
         try:
             result = pool.apply_async(processCorpusDir, args=(corpus_dir,))
@@ -325,4 +324,5 @@ def main():
 ############################################################
 
 if __name__ == "__main__":
-    main()
+    main(test_repo_name)
+    main(train_repo_name)

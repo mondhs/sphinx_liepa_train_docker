@@ -29,13 +29,13 @@ class TranscriberRegexp:
         ("iau", "E U"),
         ("ja", "J. E"), #jau, japonas
         ("ją", "J. E_"), #naują
-        
+
 
         #Dantiniai priebalsiai {S, Z, C, DZ} prieš alveolinius {S2, Z2, C2, DZ2} keičiami atitinkamai į alveolinius {S2, Z2, C2, DZ2} (slenksčiai -> S L E N K S2 C2 E I).
         ("sž","S2 Z2"),#?
         ("sč","S2 C2"),#kunigaikštysčiu
         ("zdž","Z2 DZ2"),#vabzdžiai
-        
+
         # duslieji prieš skardžiuosius
         ("pb", "B B"),
         ("pg", "B G"),#apgadintas
@@ -103,7 +103,7 @@ class TranscriberRegexp:
         ("chdž", "H DZ2"),
         ("chd", "H D"),
         ("chh", "H H"),
-        
+
         #skardieji prieš dusliuosius
         ("bp", "P P"),
         ("bt", "P T"),
@@ -181,13 +181,13 @@ class TranscriberRegexp:
 
 
 
-        
+
 
         ("ch", "CH"),
         ("dž", "DZ2"),
         ("dz", "DZ"),
 
-                
+
         #grafemos
         ("a", "A"),
         ("ą", "A_"),
@@ -228,7 +228,7 @@ class TranscriberRegexp:
         #grįžk skardieji prieš duslieji š
         #minkštumas: džiaugsmas prieš e, i, ė yra minkšti
         #minkštumas: ankstenė - k ir g sustabdomas minkšumas anks't'enė
-        #!Neitraukiant minkšrumo! tai butinai reikia iu ir io kaip atskiros fonemos. 
+        #!Neitraukiant minkšrumo! tai butinai reikia iu ir io kaip atskiros fonemos.
 
     preprocesorMap = [
         ("^ie","jie"),
@@ -274,7 +274,7 @@ class TranscriberRegexp:
         return self.transcribation_regex.sub(lambda mo: " " + self.transcribation_rulesDict[mo.string[mo.start():mo.end()]] + " ", preprocesedText)
 
     def transcribe(self, word):
-        lowerWord = word.decode('utf-8').lower().encode('utf-8')
+        lowerWord = word.lower()#.decode('utf-8').lower().encode('utf-8')
         transcibedWord = self.multiple_replace(lowerWord)
         transcibedWord = re.sub(r'\s+', ' ', transcibedWord)
         transcibedWord = transcibedWord.upper().strip()
@@ -311,39 +311,39 @@ def processFile(input_file):
     sphinx_dictionary = collections.OrderedDict(sorted(sphinx_dictionary.items(), key=lambda t: t[0]))
     return sphinx_dictionary
 
-        
+
 def writeToFile(sphinx_dictionary, output_file):
     for key, value in sphinx_dictionary.iteritems():
         output_file.write("{}\t{}\n".format(key, value))
-        
+
 def writeToConsole(sphinx_dictionary):
     for key, value in sphinx_dictionary.iteritems():
-        print "{}\t{}".format(key, value)
+        print ("{}\t{}".format(key, value))
 
 
 def main():
     usage='%(prog)s --help'
     description='''Transcription text to phone for CMU Sphinx recognition. Example: %(prog)s -i zodziai.txt -o zodziai.dict
     '''
-    parser = argparse.ArgumentParser(usage=usage,description=description)    
+    parser = argparse.ArgumentParser(usage=usage,description=description)
     parser.add_argument('-o', '--output_file', help='Output text dictionary file: word   W O R D', metavar='out-file', type=argparse.FileType('wt'))
     parser.add_argument('-v', '--verbose', action='store_true',help='Verbose output for debuging')
     group = parser.add_mutually_exclusive_group()
     parser.add_argument("input_words",  nargs='?', help="echo the string you use here")
     group.add_argument('-i', '--input_file', help='Input text file one word per line, \'-\' for standard input', metavar='in-file', type=argparse.FileType('rt'))
 
-    
+
     args = parser.parse_args()
-    if args.verbose: print args
+    if args.verbose: print (args)
     sphinx_dictionary = {}
-    
+
     if args.input_file:
         sphinx_dictionary = processFile(args.input_file)
     elif args.input_words:
         sphinx_dictionary = processWords(args.input_words)
     else:
         sphinx_dictionary = processWords("bandom besikiškiakopūstaudavome")
-        
+
     if args.output_file:
         writeToFile(sphinx_dictionary, args.output_file)
     else:
@@ -351,5 +351,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
