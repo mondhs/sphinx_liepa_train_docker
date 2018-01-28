@@ -117,7 +117,7 @@ def copyCorpusDir(speak_dir):
             #if not corpus_dir.startswith("S"):
             #    print "Skiping: " + corpus_dir
             #    continue
-            print "{}".format(speak_dir, corpus_dir)
+            print "Starting: {}".format(speak_dir, corpus_dir)
             #os.makedirs (dest_dir + "/" + corpus_dir)
             read_files = glob.glob(src_dir + "/" + speak_dir + "/"  + corpus_dir + "/*.wav")
             for wav_file in read_files:
