@@ -55,7 +55,7 @@ RUN make install
 
 
 RUN mkdir -p /opt/sphinx_liepa_train/liepa_audio
-RUN ln -s /data/train_repo /opt/sphinx_liepa_train/liepa_audio/train
+RUN ln -s /data/train_repo /opt/sphinx_liepa_train/liepa_train/audio
 RUN ln -s /data/test_repo /opt/sphinx_liepa_train/liepa_audio/test
 RUN ln -s /data/sphinx_data/feat /opt/sphinx_liepa_train/feat
 RUN ln -s /data/sphinx_data/etc /opt/sphinx_liepa_train/etc
